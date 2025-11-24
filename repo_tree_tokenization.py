@@ -1,6 +1,8 @@
 import os
 import sys
-import re  # NEW: for regex based comment removal and tokenization
+import re
+import json  # for writing tree.json
+
 
 # Folders we usually don't care about
 IGNORE_DIRS = {
@@ -220,7 +222,7 @@ def preprocess_file_java(root_path, rel_path):
 
 def main():
     if len(sys.argv) != 3:
-        print("Usage: python repo_tree.py <path_to_repo1> <path_to_repo2>")
+        print("Usage: python repo_tree_tokenization.py <path_to_repo1> <path_to_repo2>")
         sys.exit(1)
 
     repo1_path = sys.argv[1]
@@ -259,6 +261,20 @@ def main():
     else:
         for path in code_files_repo2:
             print(" -", path)
+
+    # ==== Save tree + code files info to tree.json ====
+    output = {
+        "repo1_root": os.path.abspath(repo1_path),
+        "repo2_root": os.path.abspath(repo2_path),
+        "repo1_tree": tree1,
+        "repo2_tree": tree2,
+        "repo1_code_files": code_files_repo1,
+        "repo2_code_files": code_files_repo2,
+    }
+
+    with open("tree.json", "w", encoding="utf-8") as f:
+        json.dump(output, f, indent=2)
+    print('\nSaved tree + code file info to "tree.json"')
 
     # ==== Step 2: Demo preprocessing on one sample Java file ====
     # We'll pick the first .java file from repo1 (if any)
