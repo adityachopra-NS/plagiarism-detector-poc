@@ -1,5 +1,4 @@
 import java.util.List;
-
 public class AppMain {
     public static void main(String[] args) {
         SubjectService ss = new SubjectService();
