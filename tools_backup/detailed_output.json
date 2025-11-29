@@ -1,0 +1,160 @@
+{
+  "tree": {
+    "repo1_root": "D:\\Plag_detector_poc\\CourseSystem_crud_demo",
+    "repo2_root": "D:\\Plag_detector_poc\\LearningManager_crud_demo",
+    "repo1_tree": {
+      "readme.md": null,
+      "src": {
+        "Course.java": null,
+        "CourseService.java": null,
+        "Main.java": null
+      }
+    },
+    "repo2_tree": {
+      "Readme.md": null,
+      "app": {
+        "AppMain.java": null,
+        "Subject.java": null,
+        "SubjectService.java": null
+      }
+    },
+    "repo1_code_files": [
+      "src\\Course.java",
+      "src\\CourseService.java",
+      "src\\Main.java"
+    ],
+    "repo2_code_files": [
+      "app\\AppMain.java",
+      "app\\Subject.java",
+      "app\\SubjectService.java"
+    ]
+  },
+  "per_file_details": {
+    "A:src/Course.java": {
+      "repo": "A",
+      "file": "src/Course.java",
+      "raw_tokens": [],
+      "normalized_tokens": [],
+      "identifier_map": {},
+      "fingerprints": [],
+      "k": 5,
+      "norm_len": 0
+    },
+    "A:src/CourseService.java": {
+      "repo": "A",
+      "file": "src/CourseService.java",
+      "raw_tokens": [],
+      "normalized_tokens": [],
+      "identifier_map": {},
+      "fingerprints": [],
+      "k": 5,
+      "norm_len": 0
+    },
+    "A:src/Main.java": {
+      "repo": "A",
+      "file": "src/Main.java",
+      "raw_tokens": [],
+      "normalized_tokens": [],
+      "identifier_map": {},
+      "fingerprints": [],
+      "k": 5,
+      "norm_len": 0
+    },
+    "B:app/AppMain.java": {
+      "repo": "B",
+      "file": "app/AppMain.java",
+      "raw_tokens": [],
+      "normalized_tokens": [],
+      "identifier_map": {},
+      "fingerprints": [],
+      "k": 5,
+      "norm_len": 0
+    },
+    "B:app/Subject.java": {
+      "repo": "B",
+      "file": "app/Subject.java",
+      "raw_tokens": [],
+      "normalized_tokens": [],
+      "identifier_map": {},
+      "fingerprints": [],
+      "k": 5,
+      "norm_len": 0
+    },
+    "B:app/SubjectService.java": {
+      "repo": "B",
+      "file": "app/SubjectService.java",
+      "raw_tokens": [],
+      "normalized_tokens": [],
+      "identifier_map": {},
+      "fingerprints": [],
+      "k": 5,
+      "norm_len": 0
+    }
+  },
+  "pairwise_similarities": [
+    {
+      "fileA": "src/Course.java",
+      "fileB": "app/AppMain.java",
+      "jaccard": 1.0,
+      "a_fprints": 0,
+      "b_fprints": 0
+    },
+    {
+      "fileA": "src/Course.java",
+      "fileB": "app/Subject.java",
+      "jaccard": 1.0,
+      "a_fprints": 0,
+      "b_fprints": 0
+    },
+    {
+      "fileA": "src/Course.java",
+      "fileB": "app/SubjectService.java",
+      "jaccard": 1.0,
+      "a_fprints": 0,
+      "b_fprints": 0
+    },
+    {
+      "fileA": "src/CourseService.java",
+      "fileB": "app/AppMain.java",
+      "jaccard": 1.0,
+      "a_fprints": 0,
+      "b_fprints": 0
+    },
+    {
+      "fileA": "src/CourseService.java",
+      "fileB": "app/Subject.java",
+      "jaccard": 1.0,
+      "a_fprints": 0,
+      "b_fprints": 0
+    },
+    {
+      "fileA": "src/CourseService.java",
+      "fileB": "app/SubjectService.java",
+      "jaccard": 1.0,
+      "a_fprints": 0,
+      "b_fprints": 0
+    },
+    {
+      "fileA": "src/Main.java",
+      "fileB": "app/AppMain.java",
+      "jaccard": 1.0,
+      "a_fprints": 0,
+      "b_fprints": 0
+    },
+    {
+      "fileA": "src/Main.java",
+      "fileB": "app/Subject.java",
+      "jaccard": 1.0,
+      "a_fprints": 0,
+      "b_fprints": 0
+    },
+    {
+      "fileA": "src/Main.java",
+      "fileB": "app/SubjectService.java",
+      "jaccard": 1.0,
+      "a_fprints": 0,
+      "b_fprints": 0
+    }
+  ],
+  "overall_repo_similarity": 1.0
+}
