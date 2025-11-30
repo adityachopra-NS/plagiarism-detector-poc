@@ -12,14 +12,26 @@ JAVA_KEYWORDS = {
     "this","throw","throws","transient","try","void","volatile","while","true","false","null"
 }
 
+# Add JS/TS/React keywords
+JS_KEYWORDS = {
+    "break","case","catch","class","const","continue","debugger","default","delete","do","else",
+    "export","extends","finally","for","function","if","import","in","instanceof","let","new",
+    "return","super","switch","this","throw","try","typeof","var","void","while","with","yield",
+    "await","async","of","from","interface","implements","package","private","protected","public",
+    "enum","type","as","any","never","unknown","readonly","global","namespace","declare","module"
+}
+
+# Combined keyword set
+KEYWORDS = JAVA_KEYWORDS.union(JS_KEYWORDS)
+
 IGNORE_DIRS = {
     ".git",".idea",".vscode","node_modules","__pycache__","target","build",".metadata"
 }
 
-CODE_EXT = {".java",".py",".c",".cpp",".js",".ts",".cs",".go",".rb",".php"}
+CODE_EXT = {".java",".py",".c",".cpp",".js",".ts",".cs",".go",".rb",".php", ".jsx", ".tsx"}
 
 # --------------------------------------------
-# FILE READ / SANITIZE
+# FILE READ / SANITIZE (we will rely on tokenizer to ignore comments)
 # --------------------------------------------
 
 def read_text(root, rel):
@@ -28,43 +40,59 @@ def read_text(root, rel):
         return f.read()
 
 def remove_comments(code):
+    # kept for reference but not used in main flow (naive)
     code = re.sub(r"/\*.*?\*/", "", code, flags=re.DOTALL)
     code = re.sub(r"//.*", "", code)
     code = re.sub(r"(?m)^\s*#(?!\!).*$", "", code)
     return code
 
 # --------------------------------------------
-# TOKENIZER (fixed)
+# TOKENIZER (improved for JS/React)
+# - comments are captured as tokens and filtered out
+# - template literals (backticks) are tokenized as one token
 # --------------------------------------------
 
 token_pattern = re.compile(r"""
-    "[^"\\\n]*(?:\\.[^"\\\n]*)*"    |   # string (double quotes)
-    '[^'\\\n]*(?:\\.[^'\\\n]*)*'    |   # string (single quotes)
-    [A-Za-z_][A-Za-z0-9_]*         |   # identifiers / keywords
-    \d+\.\d+|\d+                   |   # numbers
-    ==|!=|<=|>=|\+\+|--|&&|\|\||->|=>|:= |   # multi-char ops
+    /\*[\s\S]*?\*/                   |   # block comment (capture then drop)
+    //.*                             |   # line comment (capture then drop)
+    `(?:\\.|[^\\`])*`                |   # template literal (backticks)
+    "[^"\\\n]*(?:\\.[^"\\\n]*)*"     |   # double-quoted string
+    '[^'\\\n]*(?:\\.[^'\\\n]*)*'     |   # single-quoted string
+    [A-Za-z_][A-Za-z0-9_]*           |   # identifiers / keywords
+    \d+\.\d+|\d+                     |   # numbers
+    ==|!=|<=|>=|\+\+|--|&&|\|\||->|=>|:=   |   # multi-char ops
     [~!%^&*()+={}\[\]|\\:;\"'<>,.?/-]      # single char symbols
 """, re.VERBOSE)
 
+_comment_re = re.compile(r"^(/\*|\s*//)")
+
 def tokenize(code):
-    tokens = token_pattern.findall(code)
-    return [t for t in tokens if t.strip()]
+    raw_tokens = token_pattern.findall(code)
+    tokens = []
+    for t in raw_tokens:
+        if not t:
+            continue
+        # drop comments entirely
+        if _comment_re.match(t):
+            continue
+        tokens.append(t)
+    return tokens
 
 # --------------------------------------------
 # NORMALIZATION
 # --------------------------------------------
 
-def normalize(tokens, keywords=JAVA_KEYWORDS):
+def normalize(tokens, keywords=KEYWORDS):
     id_map = {}
     next_id = 1
     norm = []
 
     for tok in tokens:
-        # string literal → STR
-        if (tok.startswith('"') and tok.endswith('"')) or (tok.startswith("'") and tok.endswith("'")):
+        # template or quoted strings → STR
+        if (tok.startswith('"') and tok.endswith('"')) or (tok.startswith("'") and tok.endswith("'")) or (tok.startswith("`") and tok.endswith("`")):
             norm.append("STR")
 
-        # Java keyword
+        # keyword (JS/Java combined)
         elif tok in keywords:
             norm.append(tok)
 
@@ -72,14 +100,14 @@ def normalize(tokens, keywords=JAVA_KEYWORDS):
         elif re.fullmatch(r"\d+\.\d+|\d+", tok):
             norm.append("NUM")
 
-        # identifier
+        # identifier (includes JSX tag names and component names)
         elif re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", tok):
             if tok not in id_map:
                 id_map[tok] = f"ID{next_id}"
                 next_id += 1
             norm.append(id_map[tok])
 
-        # operator / symbol
+        # operator / symbol (keep as-is)
         else:
             norm.append(tok)
 
@@ -130,29 +158,29 @@ def jaccard(a, b):
 # --------------------------------------------
 
 def aggregate(repoA, repoB):
-    # repoA: {file: {fingerprints, norm_len}}
-    # repoB: same structure
-    # A -> B
     totw = sum(max(1, info["norm_len"]) for info in repoA.values())
     sumw = 0
 
     for relA, infoA in repoA.items():
-        best = max(jaccard(infoA["fingerprints"], infoB["fingerprints"]) for infoB in repoB.values())
+        best = 0.0
+        for infoB in repoB.values():
+            best = max(best, jaccard(infoA["fingerprints"], infoB["fingerprints"]))
         w = max(1, infoA["norm_len"])
         sumw += best * w
 
-    scoreA = sumw / totw
+    scoreA = sumw / totw if totw else 0.0
 
-    # B -> A
     totw = sum(max(1, info["norm_len"]) for info in repoB.values())
     sumw = 0
 
     for relB, infoB in repoB.items():
-        best = max(jaccard(infoB["fingerprints"], infoA["fingerprints"]) for infoA in repoA.values())
+        best = 0.0
+        for infoA in repoA.values():
+            best = max(best, jaccard(infoB["fingerprints"], infoA["fingerprints"]))
         w = max(1, infoB["norm_len"])
         sumw += best * w
 
-    scoreB = sumw / totw
+    scoreB = sumw / totw if totw else 0.0
 
     return (scoreA + scoreB) / 2.0
 
@@ -198,8 +226,7 @@ def main():
     # process repo A
     for rel in filesA:
         txt = read_text(repo1, rel)
-        txt = remove_comments(txt)
-        toks = tokenize(txt)
+        toks = tokenize(txt)            # do NOT remove comments beforehand
         norm, idmap = normalize(toks)
         fps = fingerprints_from_norm(norm, k=5)
 
@@ -216,7 +243,6 @@ def main():
     # process repo B
     for rel in filesB:
         txt = read_text(repo2, rel)
-        txt = remove_comments(txt)
         toks = tokenize(txt)
         norm, idmap = normalize(toks)
         fps = fingerprints_from_norm(norm, k=5)
