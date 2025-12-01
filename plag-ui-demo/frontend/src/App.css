@@ -1,0 +1,55 @@
+/* frontend/src/App.css */
+:root{
+  --bg:#111217;
+  --card:#1b1d22;
+  --muted:#9aa0a6;
+  --accent:#3b82f6;
+  --accent-dark:#2563eb;
+  --danger:#ff6b6b;
+  --panel:#0f1113;
+  --text:#e6eef6;
+}
+
+*{box-sizing:border-box;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;}
+
+body, html, #root { height:100%; margin:0; background:var(--bg); color:var(--text); }
+
+.page{ padding:28px; display:flex; justify-content:center; align-items:flex-start; min-height:100vh; }
+
+.card{ width:980px; max-width:96%; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:12px; padding:28px; box-shadow: 0 6px 30px rgba(0,0,0,0.6); }
+
+.title{ font-size:34px; margin:0 0 8px 0; font-weight:700; color:var(--text); }
+.subtitle{ color:var(--muted); margin:0 0 18px 0; font-size:13px; }
+
+.grid{ display:flex; gap:16px; margin-bottom:12px; flex-wrap:wrap; }
+.panel{ flex:1; min-width:220px; background:var(--panel); padding:14px; border-radius:8px; border:1px solid rgba(255,255,255,0.03); }
+.label{ font-size:13px; color:var(--muted); margin-bottom:8px; }
+.meta{ margin-top:8px; color:var(--muted); font-size:12px; }
+
+.actions{ display:flex; align-items:center; gap:16px; margin-top:8px; }
+.btn{ padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04); cursor:pointer; background:transparent; color:var(--text); }
+.btn.primary{ background:linear-gradient(180deg,var(--accent), var(--accent-dark)); box-shadow:0 6px 18px rgba(50,100,250,0.12); border:none; color:white; }
+
+.progressWrap{ flex:1; display:flex; align-items:center; gap:12px; }
+.progressBar{ height:10px; background:rgba(255,255,255,0.04); border-radius:999px; width:100%; overflow:hidden; }
+.progressFill{ height:100%; background:linear-gradient(90deg,var(--accent), var(--accent-dark)); width:0%; transition:width 300ms ease; }
+.progressText{ color:var(--muted); font-size:12px; min-width:38px; text-align:right; }
+
+.errorBox{ margin-top:12px; background:rgba(255,0,0,0.06); color:var(--danger); padding:8px 12px; border-radius:8px; border:1px solid rgba(255,0,0,0.08); }
+
+.results{ margin-top:18px; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00)); border-radius:10px; padding:12px; border:1px solid rgba(255,255,255,0.03); }
+.resultsHeader{ display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.small{ color:var(--muted); font-size:13px; }
+.big{ font-size:28px; font-weight:700; color:var(--text); margin-top:6px; }
+
+.matches{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+.matchRow{ display:flex; justify-content:space-between; align-items:center; padding:10px; background:rgba(255,255,255,0.01); border-radius:8px; border:1px solid rgba(255,255,255,0.02); font-size:13px; }
+.matchFiles{ display:flex; gap:10px; align-items:center; max-width:82%; overflow:hidden; }
+.fileA, .fileB{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:40ch; color:var(--text); }
+.arrow{ color:var(--muted); margin:0 6px; }
+.matchScore{ color:var(--accent); font-weight:700; min-width:54px; text-align:right; }
+
+.muted{ color:var(--muted); font-size:12px; }
+
+.rawJson{ margin-top:12px; color:var(--muted); }
+.rawJson pre{ background:#0b0c0d; color:#dbeafe; padding:12px; border-radius:8px; max-height:320px; overflow:auto; font-size:12px; line-height:1.4; }
