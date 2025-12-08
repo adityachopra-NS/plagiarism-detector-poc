@@ -159,7 +159,7 @@ export default function App() {
             </div>
 
             <div className="matches" style={{ marginTop: 12 }}>
-              <div className="small muted">Top file matches</div>
+              <div className="small muted">All file-to-file comparisons</div>
               {results.pairs && results.pairs.length ? (
                 results.pairs.slice(0, 30).map((p, i) => (
                   <div className="matchRow" key={i}>
